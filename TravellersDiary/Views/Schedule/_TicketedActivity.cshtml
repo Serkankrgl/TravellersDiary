@@ -1,0 +1,43 @@
+﻿@model List<TravellersDiary.Models.Schedule.TicketedActivityModel>
+
+    <div class="col-md-12 mb-4">
+        <div class="card border-bottom-warning shadow h-100 py-2 bg-warning text-dark">
+            <div class="card-body">
+                <div class="no-gutters align-items-center text-center">
+                    <h5 class="d-inline-block text-dark ">Biletli Aktiviteler</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+@foreach (var item in Model)
+{
+    <div class="col-md-12 mb-4">
+        <div class="card border-bottom-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="no-gutters align-items-center">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                        <h5 class="d-inline-block"> @item.ACT_TITLE</h5>
+                        <h5 class=" float-right">@item.COST_OF TL</h5>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-0 font-weight-bold text-gray-800">@item.ACT_DETAILS</div>
+                            <hr />
+                        </div>
+                        <div class="col-md-9">
+                            <div class="mb-0 font-weight-bold text-gray-800">Bilet Bilgileri:</div>
+                            <div class="mb-0 font-weight-bold text-gray-800">@item.TICKET_DETAILS</div>
+                            <div class="mb-0 font-weight-bold text-gray-800">@Html.Action("GetCompany","Schedule",new { id= item.COMPANY_ID})</div>
+
+                        </div>
+                        <div class="col-md-3 row">
+
+                            <div class="mb-0 font-weight-bold text-gray-800"> @item.ACT_START_TIME</div>
+                            <div class="mb-0 font-weight-bold text-gray-800"> @item.ACT_FNISH_TIME</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

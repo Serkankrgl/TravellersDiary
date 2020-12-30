@@ -1,0 +1,75 @@
+﻿@model TravellersDiary.ViewModels.MemoryViewModel
+
+    <div class="mx-2">
+        <p>
+            <div class="btn-group my-3" role="group" aria-label="Basic example">
+                <a href="#" class="btn btn-warning border-secondary" data-toggle="modal" data-target="#createMemory">Hatıra Ekle</a>
+
+            </div>
+        </p>
+        <table class="table table-dark table-striped">
+            <tr>
+                <th colspan="3">
+                    <h6>Hatıram</h6>
+                </th>
+                <th>
+                    <h6>Tarih</h6>
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model.memories)
+            {
+                <tr>
+                    <td colspan="3">
+                        @item.TXT_MEMORY
+                    </td>
+                    <td>
+                        @item.DT_DATE.ToShortDateString()
+                    </td>
+                    <td>
+                        @Html.ActionLink("Sil", "DeleteMemory","Memory",new { id= @item.PK_MEMORIES_ID}, new { @class="btn btn-primary"})
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+
+<div class="modal fade" id="createMemory" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Hatıra Ekle </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("CreateMemory", "Memory", FormMethod.Post))
+                {
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="message-text" class="col-form-label">Hatıra İçeriği</label>
+                            <textarea class="form-control" id="message-text" name="TXT_MEMORY"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Hatıra Tarihi</label>
+                        <input type="text" class="form-contro " id="dt_date_picker3" name="DT_DATE" autocomplete="off">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal Et</button>
+                        <button type="submit" class="btn btn-primary">Oluştur</button>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control d-none" id="input-Vac-id" name="TRAVELLER_ID" value="@Model.traveller.PK_TRAVELLER_ID">
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+</div>

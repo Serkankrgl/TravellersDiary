@@ -1,0 +1,19 @@
+﻿@model TravellersDiary.ViewModels.LikeViewModel
+<div class="float-right">
+    @if (Model.LikeStatus == 0)
+    {
+        @Html.ActionLink("+", "Rate", "Home", new { id = Model.VacationId, type = true }, new { @class = "btn btn-primary mx-2" })
+        @Html.ActionLink("-", "Rate", "Home", new { id = Model.VacationId, type = false }, new { @class = "btn btn-primary mx-2" })
+
+    }
+    else if (Model.LikeStatus == 1)
+    {
+        <p class="d-inline">Beğendin</p>
+        @Html.ActionLink("Temizle", "ClearRate", "Home", new { id = Model.VacationId }, new { @class = "btn btn-primary mx-2 d-inline" })
+    }
+    else if (Model.LikeStatus == -1)
+    {
+        <p class="d-inline">Beğenmedin</p>
+        @Html.ActionLink("Temizle", "ClearRate", "Home", new { id = Model.VacationId }, new { @class = "btn btn-primary mx-2 d-inline" })
+    }
+</div>

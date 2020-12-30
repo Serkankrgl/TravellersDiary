@@ -1,0 +1,464 @@
+﻿@model TravellersDiary.ViewModels.ScheduleViewModel
+@{
+    ViewBag.Title = "Schedule";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    bool isOwner = false;
+}
+
+
+@if (Model == null)
+{
+
+}
+else
+{
+
+    <div class="mx-2">
+        <div>
+            <h5 class="text-warning">Etiketlemeler</h5>
+            @foreach (var item in Model.Owners)
+            {
+                if (Model.VacationBadge.PK_TRAVELLER_ID != item.PK_TRAVELLER_ID)
+                {
+                    <h6 class="text-decoration-none">@Html.ActionLink(@item.CH_TAG_NAME, "Index", "Profile", new { name = @item.CH_TAG_NAME }, new { @class = "text-decoration-none text-warning" })</h6>
+                }
+                if (Model.Traveller.PK_TRAVELLER_ID == item.PK_TRAVELLER_ID)
+                {
+                    isOwner = true;
+                }
+            }
+        </div>
+        @if (isOwner)
+        {
+            <div class="btn-group my-3" role="group" aria-label="Basic example">
+                <a href="#" class="btn btn-warning border-secondary" data-toggle="modal" data-target="#AddFriend">Kişi Ekle</a>
+                <a href="#" class="btn btn-warning border-secondary" data-toggle="modal" data-target="#createSchedule">Gün Ekle</a>
+                <a href="#" class="btn btn-warning border-secondary" data-toggle="modal" data-target="#createTicketedActivity">Biletli Aktivite Ekle</a>
+                <a href="#" class="btn btn-warning border-secondary" data-toggle="modal" data-target="#createMealActivity">Yemek Aktivitesi Ekle</a>
+                <a href="#" class="btn btn-warning border-secondary" data-toggle="modal" data-target="#createAccommodation">Konaklama Bilgisi Ekle</a>
+                <a href="#" class="btn btn-warning border-secondary" data-toggle="modal" data-target="#createRented">Kiralama Bilgisi Ekle</a>
+            </div>
+        }
+        <br />
+        <div class="btn-group my-3" role="group" aria-label="Basic example">
+            @foreach (var item in Model.Schedules)
+            {
+                <a href="#wrapper_@item.PK_SCHEDULE_ID" class="btn btn-warning border-secondary">@item.DT_DATE.ToShortDateString()</a>
+            }
+        </div>
+        <!--Accommodation and Rents-->
+        <div class="card shadow mb-4 bg-dark">
+            <!-- Card Header - Accordion -->
+            <a href="#Accommodation" class="d-block card-header py-3 " data-toggle="collapse"
+               role="button" aria-expanded="true" aria-controls="collapseCardExamplei">
+                <div class="row">
+                    <div class="col-md-6"><h4 class="m-0 font-weight-bold text-light text-center">Konaklama</h4></div>
+                    <div class="col-md-6"><h4 class="m-0 font-weight-bold text-light text-center ">Kiralamalar</h4></div>
+                </div>
+
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse show " id="Accommodation">
+                <div class="card-body row">
+                    <div class="col-md-6 ">
+                        <!--Accommodation-->
+                        @Html.Action("Accommodation", "Schedule", new { id = @Model.VacationBadge.PK_VACATION_ID })
+                    </div>
+                    <div class="col-md-6">
+                        <!--Rent-->
+                        @Html.Action("Rented", "Schedule", new { id = @Model.VacationBadge.PK_VACATION_ID })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Daily Schedules-->
+        @foreach (var item in Model.Schedules)
+        {
+            <div class="card shadow mb-4 bg-dark" id="wrapper_@item.PK_SCHEDULE_ID">
+                <!-- Card Header - Accordion -->
+                <a href="#cardid_@item.PK_SCHEDULE_ID" class="d-block card-header py-3" data-toggle="collapse"
+                   role="button" aria-expanded="true" aria-controls="collapseCardExamplei">
+                    <h4 class="m-0 font-weight-bold text-primary text-center text-light">@item.DT_DATE.ToShortDateString()</h4>
+                </a>
+                <!-- Card Content - Collapse -->
+                <div class="collapse show" id="cardid_@item.PK_SCHEDULE_ID">
+                    <div class="card-body row">
+                        <div class="col-md-6">
+                            @Html.Action("TicketedActivity", "Schedule", new { id = item.PK_SCHEDULE_ID })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.Action("MealActivity", "Schedule", new { id = item.PK_SCHEDULE_ID })
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+
+
+
+    <!--Modals-->
+    <!--Create Ticketed Act Start-->
+    <div class="modal fade" id="createTicketedActivity" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Biletli Aktivite Ekle </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @using (Html.BeginForm("CreateTicketedAct", "Schedule", FormMethod.Post))
+                    {
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="recipient-name" class="col-form-label">Ativite Adı:</label>
+                                <input type="text" class="form-control" id="recipient-name" name="CH_TITLE" autocomplete="off">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label for="scheduledate" class="col-form-label">Tatil Günü:</label>
+                                <select class="form-control" id="scheduledate" name="BASE_SCHEDULE_ID">
+                                    @foreach (var item in Model.Schedules)
+                                    {
+
+                                        <option value="@item.PK_SCHEDULE_ID">@item.DT_DATE.ToShortDateString()</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="message-text" class="col-form-label">Activite Detayları:</label>
+                                <textarea class="form-control" id="message-text" name="TXT_ACT_DETAILS"></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="message-text" class="col-form-label">Bilet Bilgileri:</label>
+                                <textarea class="form-control" id="message-text" name="TXT_TICKET_DETAILS"></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label for="scheduledate" class="col-form-label">Firma:</label>
+                                <select class="form-control" id="scheduledate" name="COMPANY_ID">
+                                    @foreach (var item in Model.Companys)
+                                    {
+                                        <option value="@item.PK_COMPANY_ID">@item.CH_COMP_NAME</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="recipient-name" class="col-form-label">Ücret:</label>
+                                <input type="text" class="form-control" id="recipient-name" name="MNY_COST_OF" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="recipient-name" class="col-form-label">Başlangıç Saati:</label>
+                                <input type="text" class="form-control" name="TM_START_TIME" id="timepicker1">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="recipient-name" class="col-form-label">Bitiş Saati:</label>
+                                <input type="text" class="form-control" name="TM_FNISH_TIME" id="timepicker2">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="recipient-name" name="TRAVELLER_ID" value="@Model.Traveller.PK_TRAVELLER_ID" hidden>
+                            <input type="text" class="form-control" id="recipient-name" name="VACATION_ID" value="@Model.VacationBadge.PK_VACATION_ID" hidden>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal Et</button>
+                            <button type="submit" class="btn btn-primary">Oluştur</button>
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!--Create Ticketed Act End-->
+    <!-- Create Schedule Start -->
+    <div class="modal fade" id="createSchedule" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Gün Ekle </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @using (Html.BeginForm("CreateSchedule", "Schedule", FormMethod.Post))
+                    {
+
+                        <div class="form-group">
+                            <label for="recipient-name" class="col-form-label">Tatil Günü:</label>
+                            <input type="text" class="form-contro " id="dt_date_picker" name="DT_DATE" autocomplete="off">
+                            <div class="form-group">
+                                <input type="text" class="form-control d-none" id="input-Vac-id" name="VACATION_ID" value="@Model.VacationBadge.PK_VACATION_ID">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal Et</button>
+                            <button type="submit" class="btn btn-primary">Oluştur</button>
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Create Schedule End -->
+    <!-- Create Meal Act Start-->
+    <div class="modal fade" id="createMealActivity" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Yemekli Aktivite Ekle </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @using (Html.BeginForm("CreateMealAct", "Schedule", FormMethod.Post))
+                    {
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="recipient-name" class="col-form-label">Ativite Adı:</label>
+                                <input type="text" class="form-control" id="recipient-name" name="CH_TITLE" autocomplete="off">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label for="scheduledate" class="col-form-label">Tatil Günü:</label>
+                                <select class="form-control" id="scheduledate" name="BASE_SCHEDULE_ID">
+                                    @foreach (var item in Model.Schedules)
+                                    {
+                                        <option value="@item.PK_SCHEDULE_ID">@item.DT_DATE.ToShortDateString()</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="message-text" class="col-form-label">Activite Detayları:</label>
+                                <textarea class="form-control" id="message-text" name="TXT_ACT_DETAILS"></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="message-text" class="col-form-label">Yemek ADI:</label>
+                                <textarea class="form-control" id="message-text" name="TXT_MEAL_NAME"></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label for="scheduledate" class="col-form-label">Firma:</label>
+                                <select class="form-control" id="scheduledate" name="COMPANY_ID">
+                                    @foreach (var item in Model.Companys)
+                                    {
+                                        <option value="@item.PK_COMPANY_ID">@item.CH_COMP_NAME</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="scheduledate" class="col-form-label">Puan:</label>
+                                <select class="form-control" id="scheduledate" name="INT_RATING">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="recipient-name" class="col-form-label">Ücret:</label>
+                                <input type="text" class="form-control" id="recipient-name" name="MNY_COST_OF" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="recipient-name" class="col-form-label">Başlangıç Saati:</label>
+                                <input type="text" class="form-control" name="TM_START_TIME" id="timepicker3">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="recipient-name" class="col-form-label">Bitiş Saati:</label>
+                                <input type="text" class="form-control" name="TM_FNISH_TIME" id="timepicker4">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="recipient-name" name="TRAVELLER_ID" value="@Model.Traveller.PK_TRAVELLER_ID" hidden>
+                            <input type="text" class="form-control" id="recipient-name" name="VACATION_ID" value="@Model.VacationBadge.PK_VACATION_ID" hidden>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal Et</button>
+                            <button type="submit" class="btn btn-primary">Oluştur</button>
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Create Meal Act End-->
+    <!--Create Accommodatıon Start-->
+    <div class="modal fade" id="createAccommodation" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Konaklama Bilgisi Ekle </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @using (Html.BeginForm("CreateAccommodation", "Schedule", FormMethod.Post))
+                    {
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="recipient-name" class="col-form-label">Ücret:</label>
+                                <input type="text" class="form-control" id="recipient-name" name="MNY_COSTOFACC" autocomplete="off">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label for="scheduledate" class="col-form-label">Firma:</label>
+                                <select class="form-control" id="scheduledate" name="CH_ACC_TYPE">
+                                    <option>Ev</option>
+                                    <option>Otel</option>
+                                    <option>Kamp</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label for="scheduledate" class="col-form-label">Firma:</label>
+                                <select class="form-control" id="scheduledate" name="COMPANY_ID">
+                                    @foreach (var item in Model.Companys)
+                                    {
+                                        <option value="@item.PK_COMPANY_ID">@item.CH_COMP_NAME</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="message-text" class="col-form-label">Adres:</label>
+                                <textarea class="form-control" id="message-text" name="TXT_ADDRESS"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal Et</button>
+                            <button type="submit" class="btn btn-primary">Oluştur</button>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control d-none" id="input-Vac-id" name="VACATION_ID" value="@Model.VacationBadge.PK_VACATION_ID">
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!--Create Accommodatıon Start-->
+    <!--Create Rented Start-->
+    <div class="modal fade" id="createRented" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Kiralama Bilgisi Ekle </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @using (Html.BeginForm("CreateRented", "Schedule", FormMethod.Post))
+                    {
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="message-text" class="col-form-label">Kıralanan Nesne:</label>
+                                <textarea class="form-control" id="message-text" name="TXT_OBJECT"></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="recipient-name" class="col-form-label">Ücret:</label>
+                                <input type="text" class="form-control" id="recipient-name" name="MNY_COSTOFRENT" autocomplete="off">
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label for="scheduledate" class="col-form-label">Firma:</label>
+                                <select class="form-control" id="scheduledate" name="COMPANY_ID">
+                                    @foreach (var item in Model.Companys)
+                                    {
+                                        <option value="@item.PK_COMPANY_ID">@item.CH_COMP_NAME</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal Et</button>
+                            <button type="submit" class="btn btn-primary">Oluştur</button>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control d-none" id="input-Vac-id" name="VACATION_ID" value="@Model.VacationBadge.PK_VACATION_ID">
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!--Create Rented Start-->
+    <!--Add FriendWith Start-->
+    <div class="modal fade" id="AddFriend" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Tatile Arkadaş Ekle </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @using (Html.BeginForm("AddFriendToVac", "Schedule", FormMethod.Post))
+                    {
+
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label for="scheduledate" class="col-form-label">Takip Ettiklerim</label>
+                                <select class="form-control" id="scheduledate" name="TRAVELLER_ID">
+                                    @foreach (var item in Model.Followings)
+                                    {
+                                        <option value="@item.PK_TRAVELLER_ID">@item.CH_TAG_NAME</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal Et</button>
+                            <button type="submit" class="btn btn-primary">Ekle</button>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control d-none" id="input-Vac-id" name="VACATION_ID" value="@Model.VacationBadge.PK_VACATION_ID">
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!--Add FriendWith Start-->
+}

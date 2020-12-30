@@ -1,0 +1,96 @@
+﻿@model TravellersDiary.ViewModels.VacationViewModels
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="mx-4">
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <button type="button" class="btn  mb-3 bg-warning border-warning" data-toggle="modal" data-target="#createVacation">Tatil Planı Oluştur</button>
+    </div>
+    @using (Html.BeginForm("Search", "Home", FormMethod.Post))
+    {
+        <div class="row">
+            <div class="form-group col-md-9">
+                <input type="text" class="form-control d-inline-block" id="recipient-name" name="WORD" autocomplete="off">
+                <button type="submit" class="btn btn-primary d-inline-block">Arat</button>
+            </div>
+
+        </div>
+
+    }
+
+
+
+    @foreach (var item in Model.Badges)
+    {
+        <a href="@Url.Action("Index","Schedule",new {id=@item.PK_VACATION_ID })" class="text-decoration-none">
+            <div class="card shadow mb-4 h-25">
+                <div class="card-header py-3 bg-warning border-warning">
+                    <h6 class="m-0 font-weight-bold d-inline-block text-secondary">@item.CH_TITLE</h6>
+                    <h6 class="m-0 font-weight-bold d-inline-block float-right text-secondary">
+                        @Html.ActionLink(@item.CH_TAG_NAME, "Index", "Profile", new { name = @item.CH_TAG_NAME }, new { @class = "text-decoration-none text-secondary" })
+
+                    </h6>
+                </div>
+                <div class="card-body row">
+                    <div class="col-sm-9">
+                        <p class="text-secondary">@item.TXT_INFO</p>
+                    </div>
+                    <div class="col-sm-3">
+                        <h6 class="text-secondary"> Planlanan : @item.MNY_BUDGET TL</h6>
+                        <h6 class="text-secondary"> Harcanan  : @item.MNY_COSTOFVAC TL</h6>
+                        <h6 class="text-secondary"> @item.DT_CREATION.ToShortDateString()</h6>
+                        @Html.Action("LikeStatus", "Home", new { id = item.PK_VACATION_ID })
+                    </div>
+
+
+
+                </div>
+            </div>
+        </a>
+    }
+
+</div>
+
+
+
+@*Create Vacation Modal*@
+<div class="modal fade" id="createVacation" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Hadi Tatile Çıkalım </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("CreateVacation", "Home", FormMethod.Post))
+                {
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Başlık:</label>
+                        <input type="text" class="form-control" id="recipient-name" name="CH_TITLE" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Bütçe:</label>
+                        <input type="text" class="form-control" id="recipient-name" name="INT_BUDGET" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Hakkında:</label>
+                        <textarea class="form-control" id="message-text" name="TXT_INFO"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="recipient-name" name="TRAVVELLER_ID" value="@Model.Traveller.PK_TRAVELLER_ID" hidden>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal Et</button>
+                        <button type="submit" class="btn btn-primary">Oluştur</button>
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,24 @@
+﻿@model List<TravellersDiary.Models.Schedule.Accommodation>
+
+        @foreach (var item in Model)
+        {
+            <div class="col-md-12 mb-2">
+                <div class="card border-bottom-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="no-gutters align-items-center">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                <!--titlle-->
+                                @item.CH_ACC_TYPE
+                            </div>
+                            <div class="row">
+                                <div class="col-md-9">@item.TXT_ADDRESS</div>
+                                <div class="col-md-3">Ücret<br />@item.MNY_COSTOFACC</div>
+
+                                <div class="mb-0 font-weight-bold text-gray-800 col-md-12">@Html.Action("GetCompany", "Schedule", new { id = item.COMPANY_ID })</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+

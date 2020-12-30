@@ -1,0 +1,223 @@
+﻿@model TravellersDiary.ViewModels.ProfileViewModel
+
+@if (Model.Vacations == null)
+{
+    <div class="container bg-warning">
+
+        <div class="card-body row m-3 mt-2">
+            <div class="col-md-5">
+                <div class="float-right mt-2">
+                    <img class="img-profile rounded-circle"
+                         src="~/Assets/pimg.jpg">
+                </div>
+            </div>
+            <div class="col-md-7 m-auto">
+                <h3>@Model.Traveller.CH_FIRSTNAME @Model.Traveller.CH_LASTNAME <small>(@Model.Traveller.CH_TAG_NAME)</small></h3>
+            </div>
+        </div>
+        <div class="row m-3 mt-2">
+            <div class="col-md-10">
+                <h5>Hakkımda</h5>
+                <br />
+                <p>@Model.Traveller.TXT_ABOUT</p>
+            </div>
+            <div class="col-md-2">
+                <h5> @Model.Traveller.DT_CREATION.ToShortDateString() </h5>
+            </div>
+        </div>
+
+    </div>
+}
+else
+{
+    <div class="mx-4">
+
+        <div class="bg-warning">
+            <div class="row m-3 mt-2">
+                <div class="col-md-6">
+                    <div class="float-right mt-2">
+                        <img style="height:150px; width:150px" class=" rounded-circle"
+                             src="~/Assets/pimg.jpg">
+                    </div>
+                </div>
+                <div class="col-md-6 m-auto">
+                    <h3>@Model.Traveller.CH_FIRSTNAME @Model.Traveller.CH_LASTNAME <small>(@Model.Traveller.CH_TAG_NAME)</small></h3>
+                </div>
+            </div>
+            <div class="row m-3 mt-2">
+                <div class="col-md-10">
+                    <h5>Hakkımda</h5>
+                    <br />
+                    <p>@Model.Traveller.TXT_ABOUT</p>
+                    @if (Model.Traveller.PK_TRAVELLER_ID == Model.LogedInTraveller.PK_TRAVELLER_ID)
+                    {
+                        <a href="#" class="btn btn-warning border-secondary my-1" data-toggle="modal" data-target="#EditProfile">Profil Düzenle</a>
+                    }
+                </div>
+                <div class="col-md-2">
+                    <h5> @Model.Traveller.DT_CREATION.ToShortDateString() </h5>
+                    <br />
+                    @if (Model.Traveller.PK_TRAVELLER_ID != Model.LogedInTraveller.PK_TRAVELLER_ID)
+                    {
+                        if (Model.FollowStatus)
+                        {
+                            <!--UNFLW-->
+                            @Html.ActionLink("Takipten Çıkar", "UnFollow", "Profile", new { travellerid = Model.Traveller.PK_TRAVELLER_ID, followerid = Model.LogedInTraveller.PK_TRAVELLER_ID, name = Model.Traveller.CH_TAG_NAME }, new { @class = "btn btn-secondary mb-2" })
+                        }
+                        else
+                        {
+                            <!--FLW-->
+                            @Html.ActionLink("Takip Et", "Follow", "Profile", new { travellerid = Model.Traveller.PK_TRAVELLER_ID, followerid = Model.LogedInTraveller.PK_TRAVELLER_ID, name = Model.Traveller.CH_TAG_NAME }, new { @class = "btn btn-secondary mb-2" })
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <!-- REMINDERS-->
+            <div class="col-md-3 ">
+
+                <div class="row">
+                    @if (Model.Traveller.PK_TRAVELLER_ID == Model.LogedInTraveller.PK_TRAVELLER_ID)
+                    {
+                        <div class="my-2 col-md-12 ">
+                            <a href="#" class="" data-toggle="modal" data-target="#createAchivment">
+                                <div class="card-header py-3 bg-warning border-warning text-center">
+                                    <h6 class="m-0 font-weight-bold d-inline-block text-secondary">Başarım Ekle</h6>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                    @foreach (var item in Model.Achivments)
+                    {
+
+                        <div class="col-xl-12 col-md-12 mb-2">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                @item.CH_ACH_NAME
+                                            </div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">@item.DT_DATE.ToShortDateString()</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <!-- VACATIONS-->
+            <div class="col-md-9 h-25  ">
+                <div class="my-2  ">
+                    <div class="card-header py-3 bg-warning border-warning text-center">
+                        <h6 class="m-0 font-weight-bold d-inline-block text-secondary">Tatillerim</h6>
+                    </div>
+                </div>
+                @foreach (var item in Model.Vacations)
+                {
+                    <a href="@Url.Action("Index","Schedule",new {id=@item.PK_VACATION_ID })" class="text-decoration-none">
+                        <div class="card shadow mb-4 h-25">
+                            <div class="card-header py-3 bg-warning border-warning">
+                                <h6 class="m-0 font-weight-bold d-inline-block text-secondary">@item.CH_TITLE</h6>
+                                <h6 class="m-0 font-weight-bold d-inline-block float-right text-secondary">
+                                    @Html.ActionLink(@item.CH_TAG_NAME, "Index", "Profile", new { name = @item.CH_TAG_NAME }, null)
+
+                                </h6>
+                            </div>
+                            <div class="card-body row">
+                                <div class="col-sm-9">
+                                    <p class="text-secondary">@item.TXT_INFO</p>
+                                </div>
+                                <div class="col-sm-3">
+                                    <h6 class="text-secondary"> Tatil Bütçe : @item.MNY_BUDGET TL</h6>
+                                    <h6 class="text-secondary"> @item.DT_CREATION.Day/@item.DT_CREATION.Month/@item.DT_CREATION.Year</h6>
+
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+
+        </div>
+
+    </div>
+}
+<!--Add Achivment-->
+<div class="modal fade" id="createAchivment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Başarım Ekle </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("CreateAchivment", "Profile", FormMethod.Post))
+                {
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="message-text" class="col-form-label">Başarım Adı</label>
+                            <input type="text" class="form-control" id="input-Vac-id" name="CH_ACH_NAME">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label for="recipient-name" class="col-form-label">Başarım Tarihi</label>
+                            <input type="text" class="form-contro " id="dt_date_picker3" name="DT_DATE" autocomplete="off">
+                        </div>
+                    </div>
+
+
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal Et</button>
+                        <button type="submit" class="btn btn-primary">Oluştur</button>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control d-none" id="input-Vac-id" name="TRAVELLER_ID" value="@Model.Traveller.PK_TRAVELLER_ID">
+                        <input type="text" class="form-control d-none" id="input-Vac-id" name="CH_TAG_NAME" value="@Model.Traveller.CH_TAG_NAME">
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- Edit Profile-->
+<div class="modal fade" id="EditProfile" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Profilini Düzenle </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("EditProfile", "Profile", FormMethod.Post))
+                {
+
+                    <div class="form-group col-md-12">
+                        <label for="message-text" class="col-form-label">Hakkımda</label>
+                        <textarea class="form-control" id="message-text" name="TXT_ABOUT"></textarea>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal Et</button>
+                        <button type="submit" class="btn btn-primary">Ekle</button>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control d-none" id="input-Vac-id" name="PK_TRAVELLER_ID" value="@Model.LogedInTraveller.PK_TRAVELLER_ID">
+                        <input type="text" class="form-control d-none" id="input-Vac-id" name="CH_TAG_NAME" value="@Model.LogedInTraveller.CH_TAG_NAME">
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+</div>
+

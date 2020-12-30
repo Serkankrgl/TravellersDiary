@@ -1,0 +1,77 @@
+﻿@model TravellersDiary.ViewModels.ReminderViewModel
+
+    <div class="mx-2">
+        <p>
+            <div class="btn-group my-3" role="group" aria-label="Basic example">
+                <a href="#" class="btn btn-warning border-secondary" data-toggle="modal" data-target="#createReminder">Hatırlatma Ekle</a>
+
+            </div>
+        </p>
+        <table class="table table-dark table-striped">
+            <tr>
+                <th colspan="3">
+                    <h6>Hatırlatma Mesajı</h6>
+                </th>
+                <th>
+                    <h6>Tarih</h6>
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var reminder in Model.reminders)
+            {
+                <tr>
+                    <td colspan="3">
+                        @reminder.TXT_MESSAGE
+                    </td>
+                    <td>
+                        @reminder.DT_DATE.ToShortDateString()
+                    </td>
+                    <td>
+                        @Html.ActionLink("Sil", "DeleteReminder", "Reminder", new { id = @reminder.PK_REMINDER_ID }, new { @class = "btn btn-primary" })
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+
+
+<div class="modal fade" id="createReminder" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Hatılatma Ekle </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("CreateReminder", "Reminder", FormMethod.Post))
+                {
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label for="message-text" class="col-form-label">Hatırlatma Mesajı</label>
+                        <textarea class="form-control" id="message-text" name="TXT_MESSAGE"></textarea>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="recipient-name" class="col-form-label">Hatırlatma Tarihi</label>
+                        <input type="text" class="form-contro " id="dt_date_picker1" name="DT_DATE" autocomplete="off">
+                    </div>
+                </div>
+
+
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal Et</button>
+                        <button type="submit" class="btn btn-primary">Oluştur</button>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control d-none" id="input-Vac-id" name="TRAVELLER_ID" value="@Model.traveller.PK_TRAVELLER_ID">
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+</div>
